@@ -1,12 +1,16 @@
 {
-  "name": "openshift-cartridge-nodejs-template",
-  "version": "1.0.1",
-  "description": "Custom Node.js cartridge for OpenShift - sample application",
-  "private": true,
-  "main": "start.js",
+  "name": "birthright-openshift",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "start": "node --use_strict start.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
-  "author": "Ionut-Cristian Florescu <ionut.florescu@gmail.com>",
-  "license": "ISC"
+  "repository": {
+    "type": "git",
+    "url": "ssh://57e5927a89f5cf9d7e0001a0@birthright-agrzes.rhcloud.com/~/git/birthright.git/"
+  },
+  "author": "grzegorz.abramczyk@pl.ibm.com",
+  "license": "UNLICENSED"
 }
