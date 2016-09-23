@@ -12,5 +12,8 @@
     "url": "ssh://57e5927a89f5cf9d7e0001a0@birthright-agrzes.rhcloud.com/~/git/birthright.git/"
   },
   "author": "grzegorz.abramczyk@pl.ibm.com",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
 }
