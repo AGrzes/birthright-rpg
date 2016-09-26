@@ -5,15 +5,15 @@ var security = require('./security')(app, '655064932863-ipv5fbsc0hkua3sfqm22igim
     return {id:profile};
 })
 
-app.get('/', security.secure, function (req, res) {
-    res.send('Hello World!' + JSON.stringify(req.user));
-});
 
+app.use(express.static('www'));
+app.use('/angular', express.static(__dirname + '/node_modules/angular'));
+app.use('/bootstrap', express.static(__dirname + '/bootstrap'));
 app.get('/health', function (req, res) {
     res.sendStatus(200);
 });
 
 
 app.listen(process.env.OPENSHIFT_NODEJS_PORT || 8080, process.env.OPENSHIFT_NODEJS_IP || 'localhost', function () {
-    console.log('Example app listening on port 3000!');
+    console.log('Example app listening on port 8080!');
 });
