@@ -1,5 +1,5 @@
 body {
     padding-top: 8px;
     padding-bottom: 8px;
-    background-image: url('../img/backgroundsetc-waves-10.jpg')
+    -background-image: url('../img/backgroundsetc-waves-10.jpg')
 }
