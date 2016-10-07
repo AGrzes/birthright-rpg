@@ -1,8 +1,8 @@
 var passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
+var BasicStrategy = require('passport-http').BasicStrategy;
 
-
-module.exports = function (app, clientID, clientSecret, callbackURL, lookup) {
+module.exports = function (app, clientID, clientSecret, callbackURL, lookup,serviceUser,servicePassword) {
     passport.use(new GoogleStrategy({
             clientID: clientID,
             clientSecret: clientSecret,
@@ -10,6 +10,16 @@ module.exports = function (app, clientID, clientSecret, callbackURL, lookup) {
         },
         function (accessToken, refreshToken, profile, cb) {
             cb(null, lookup(profile.emails[0].value));
+        }
+    ));
+
+    passport.use(new BasicStrategy(
+        function (userid, password, done) {
+            if (userid==serviceUser&& password==servicePassword){
+                return done(null, {});
+            } else {
+                return done(null, false);
+            }
         }
     ));
 

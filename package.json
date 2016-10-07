@@ -21,6 +21,11 @@
     "express": "^4.14.0",
     "express-session": "^1.14.1",
     "passport": "^0.3.2",
-    "passport-google-oauth20": "^1.0.0"
+    "passport-google-oauth20": "^1.0.0",
+    "passport-http": "^0.3.0",
+    "pouchdb-adapter-fs": "^2.0.3",
+    "pouchdb-core": "^6.0.6",
+    "pouchdb-express-router": "0.0.9",
+    "pouchdb-mapreduce": "^6.0.6"
   }
 }
