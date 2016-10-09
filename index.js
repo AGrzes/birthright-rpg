@@ -11,6 +11,7 @@ var security = require('./security')(app, '655064932863-ipv5fbsc0hkua3sfqm22igim
 
 app.use('/', express.static('www'));
 app.use('/angular', express.static(__dirname + '/node_modules/angular'));
+app.use('/angular-ui-router', express.static(__dirname + '/node_modules/angular-ui-router/release'));
 app.use('/bootstrap', express.static(__dirname + '/bootstrap'));
 app.get('/health', function (req, res) {
     res.sendStatus(200);

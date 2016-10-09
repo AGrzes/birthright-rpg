@@ -1,12 +1,13 @@
 <!doctype html>
-<html lang="en" ng-app=>
+<html lang="en" ng-app="birthright">
 
 <head>
     <meta charset="utf-8">
-    <title>Birthright campainn</title>
+    <title>Birthright Campaign</title>
     <link rel="stylesheet" href="bootstrap/css/bootstrap.css" />
     <link rel="stylesheet" href="css/custom.css" />
     <script src="angular/angular.js"></script>
+    <script src="angular-ui-router/angular-ui-router.js"></script>
     <script src="js/app.js"></script>
 </head>
 
@@ -14,7 +15,7 @@
     <div class="container">
         <nav class="navbar navbar-default">
             <ul class="nav navbar-nav">
-                <li><a href="#">Home</a></li>
+                <li><a href="#sample">Home</a></li>
                 <li><a href="#">Setting</a></li>
                 <li><a href="#">Log</a></li>
                 <li><a href="#">Places</a></li>
@@ -22,58 +23,8 @@
                 <li><a href="#">Organizations</a></li>
             </ul>
         </nav>
-        <div class="row">
-            <div class="col-xs-2">
-                <div class="panel panel-primary">
-                    <ul class="nav nav-stacked">
-                        <li role="presentation" class="active"><a href="#">Home</a></li>
-                        <li role="presentation"><a href="#">Profile</a></li>
-                        <li role="presentation"><a href="#">Messages</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-xs-10">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Panel title</h3>
-                    </div>
-                    <div class="panel-body">
-                        Basic panel example
-                    </div>
-                </div>
-                <div class="panel panel-info">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Panel title</h3>
-                    </div>
-                    <div class="panel-body">
-                        Basic panel example
-                    </div>
-                </div>
-                <div class="panel panel-success">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Panel title</h3>
-                    </div>
-                    <div class="panel-body">
-                        Basic panel example
-                    </div>
-                </div>
-                <div class="panel panel-warning">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Panel title</h3>
-                    </div>
-                    <div class="panel-body">
-                        Basic panel example
-                    </div>
-                </div>
-                <div class="panel panel-danger">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Panel title</h3>
-                    </div>
-                    <div class="panel-body">
-                        Basic panel example
-                    </div>
-                </div>
-            </div>
+        <div class="row" ui-view>
+
         </div>
     </div>
 
