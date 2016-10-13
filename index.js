@@ -1,5 +1,6 @@
 var express = require('express');
 var passport = require('passport');
+var browserify = require('browserify-middleware');
 var app = express();
 
 var security = require('./security')(app, '655064932863-ipv5fbsc0hkua3sfqm22igimqhn5efj6.apps.googleusercontent.com', '2fH06-I9AKfSBg9ku3E78bvR', 'http://birthright.agrzes.pl/auth/google/callback', (profile) => {
@@ -19,8 +20,8 @@ app.get('/health', function (req, res) {
 app.use('/db', passport.authenticate('basic', {
     session: false
 }), require('./pouchdb'));
+app.get('/js/app.js', browserify('src/app.js'));
 
-
-app.listen(process.env.OPENSHIFT_NODEJS_PORT || 8080, process.env.OPENSHIFT_NODEJS_IP || 'localhost', function () {
+app.listen(process.env.OPENSHIFT_NODEJS_PORT || 8080, process.env.OPENSHIFT_NODEJS_IP, function () {
     console.log('Example app listening on port 8080!');
 });
