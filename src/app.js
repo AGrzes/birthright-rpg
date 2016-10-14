@@ -26,6 +26,24 @@ angular.module('birthright', ['ui.router'])
             path: [() => '#/setting/']
         }
     });
+
+    $stateProvider.state('personByLocation', {
+        url: '/personByLocation',
+        component: 'refTree',
+        resolve: {
+            toc: ['pouchdb', function (pouchdb) {
+                return pouchdb.get("geo-toc").then((toc) => {
+                    var traverse = function (document) {
+                        return [pouchdb.get(document.node).then((d) => document.name = d.name).catch(() => document.name=document.node),
+                            _.map(document.children, traverse)
+                        ]
+                    }
+                    return Promise.all(_.flattenDeep(traverse(toc))).then(()=>toc);
+                });
+            }],
+            path: [() => '#/setting/']
+        }
+    });
     pouchdbProvider.name = window.location.protocol + "//" + window.location.host + "/db/birthright"
 })
 
