@@ -1,0 +1,17 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">{{$ctrl.item.name}}
+        <small ng-repeat="title in $ctrl.item.title"><span ng-if="!$first">,</span>{{title}}</small></h3>
+    </div>
+    <div class="panel-body">
+        <dl class="dl-horizontal">
+            <dt>Character</dt>
+            <dd>{{$ctrl.item.character}}</dd>
+            <dt>Domain</dt>
+            <dd>{{$ctrl.item.domain}}</dd>
+            <dt>Symbol</dt>
+            <dd>{{$ctrl.item.symbol}}</dd>
+        </dl>
+        <p ng-bind-html="$ctrl.item.content | markdown"></p>
+    </div>
+</div>

@@ -1,4 +1,5 @@
 var _ = require('lodash');
+var marked = require('marked');
 angular.module('birthright', ['ui.router'])
 
 .config(function ($stateProvider, $urlRouterProvider, pouchdbProvider) {
@@ -16,14 +17,34 @@ angular.module('birthright', ['ui.router'])
             toc: ['pouchdb', function (pouchdb) {
                 return pouchdb.get("reference-toc").then((toc) => {
                     var traverse = function (document) {
-                        return [pouchdb.get(document.node).then((d) => document.name = d.name).catch(() => document.name=document.node),
+                        return [pouchdb.get(document.node).then((d) => document.name = d.name).catch(() => document.name = document.node),
                             _.map(document.children, traverse)
                         ]
                     }
-                    return Promise.all(_.flattenDeep(traverse(toc))).then(()=>toc);
+                    return Promise.all(_.flattenDeep(traverse(toc))).then(() => toc);
                 });
             }],
             path: [() => '#/setting/']
+        }
+    });
+
+    $stateProvider.state('setting.page', {
+        url: '/:page',
+        componentProvider: function () {
+            console.log(arguments);
+            return 'ref';
+        },
+        templateProvider: ['templateResolver','item','$templateFactory',function (templateResolver,item,$templateFactory) {
+            return $templateFactory.fromUrl(templateResolver(item).templateUrl);
+        }],
+        controllerProvider: ['templateResolver','item',function (templateResolver,item) {
+            return templateResolver(item).controller;
+        }],
+        controllerAs: '$ctrl',
+        resolve: {
+            item: ['pouchdb', '$stateParams', function (pouchdb, $stateParams) {
+                return pouchdb.get($stateParams.page);
+            }]
         }
     });
 
@@ -34,11 +55,11 @@ angular.module('birthright', ['ui.router'])
             toc: ['pouchdb', function (pouchdb) {
                 return pouchdb.get("geo-toc").then((toc) => {
                     var traverse = function (document) {
-                        return [pouchdb.get(document.node).then((d) => document.name = d.name).catch(() => document.name=document.node),
+                        return [pouchdb.get(document.node).then((d) => document.name = d.name).catch(() => document.name = document.node),
                             _.map(document.children, traverse)
                         ]
                     }
-                    return Promise.all(_.flattenDeep(traverse(toc))).then(()=>toc);
+                    return Promise.all(_.flattenDeep(traverse(toc))).then(() => toc);
                 });
             }],
             path: [() => '#/setting/']
@@ -53,6 +74,13 @@ angular.module('birthright', ['ui.router'])
         path: '@'
     },
     templateUrl: "fragments/refTree.html"
+})
+
+.component('ref', {
+    bindings: {
+        page: '<'
+    },
+    templateUrl: "fragments/ref.html"
 })
 
 .component('toc', {
@@ -78,6 +106,10 @@ angular.module('birthright', ['ui.router'])
 
 })
 
+.controller('RefCtrl', ['item', function(item) {
+    this.item = item
+}])
+
 
 .provider('pouchdb', function () {
     var config = this;
@@ -86,4 +118,50 @@ angular.module('birthright', ['ui.router'])
         return new pouchdb(config.name, config.options);
     }]
 
-});
+})
+
+.factory('templateResolver', function () {
+    var map = {
+        default: {
+            default: {
+                templateUrl: "fragments/ref.html",
+                controller: "RefCtrl"
+            }
+        },
+        god:{
+            default: {
+                templateUrl: "fragments/god.html",
+                controller: "RefCtrl"
+            }
+        }
+
+    }
+    return function (object, mode) {
+        if (mode) {
+            if (map[object.$type]) {
+                if (map[object.$type][mode]) {
+                    return map[object.$type][mode];
+                } else if (map[object.$type]['default']) {
+                    return map[object.$type]['default'];
+                }
+            }
+            if (map['default'][mode]) {
+                return map['default'][mode];
+            } else {
+                return map['default']['default'];
+            }
+        } else {
+            if (map[object.$type] && map[object.$type]['default']) {
+                return map[object.$type]['default'];
+            } else {
+                return map['default']['default'];
+            }
+        }
+    }
+})
+
+.filter('markdown', ['$sce', function ($sce) {
+    return function (input) {
+        return $sce.trustAsHtml(marked(input));
+    };
+}]);;
