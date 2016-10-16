@@ -1,6 +1,7 @@
 var _ = require('lodash');
 var marked = require('marked');
-angular.module('birthright', ['ui.router'])
+require('angular-ui-bootstrap');
+angular.module('birthright', ['ui.router','ui.bootstrap'])
 
 .config(function ($stateProvider, $urlRouterProvider, pouchdbProvider) {
     $urlRouterProvider.otherwise('/sample');
@@ -121,7 +122,8 @@ angular.module('birthright', ['ui.router'])
     template: `
         <ul class="nav nav-stacked" ng-if="$ctrl.show" >
             <li role="presentation" ng-repeat="item in $ctrl.list"><a style="padding-left:{{$ctrl.indent}}px" href="{{$ctrl.path}}{{item.node}}">{{item.name}}</a>
-                <toc list="item[$ctrl.children]" children="{{$ctrl.children}}" level="{{$ctrl.nextLevel}}" path="{{$ctrl.path}}"/>
+            <!--a><i class="glyphicon glyphicon-triangle-bottom" ng-click="$ctrl.colapse=!$ctrl.colapse"></i></a-->
+                <toc list="item[$ctrl.children]" children="{{$ctrl.children}}" level="{{$ctrl.nextLevel}}" path="{{$ctrl.path}}" uib-collapse="$ctrl."/>
             </li>
         </ul>
     `,
