@@ -34,10 +34,10 @@ angular.module('birthright', ['ui.router'])
             console.log(arguments);
             return 'ref';
         },
-        templateProvider: ['templateResolver','item','$templateFactory',function (templateResolver,item,$templateFactory) {
+        templateProvider: ['templateResolver', 'item', '$templateFactory', function (templateResolver, item, $templateFactory) {
             return $templateFactory.fromUrl(templateResolver(item).templateUrl);
         }],
-        controllerProvider: ['templateResolver','item',function (templateResolver,item) {
+        controllerProvider: ['templateResolver', 'item', function (templateResolver, item) {
             return templateResolver(item).controller;
         }],
         controllerAs: '$ctrl',
@@ -62,10 +62,38 @@ angular.module('birthright', ['ui.router'])
                     return Promise.all(_.flattenDeep(traverse(toc))).then(() => toc);
                 });
             }],
-            path: [() => '#/setting/']
+            path: [() => '#/personByLocation/']
         }
     });
+    $stateProvider.state('personByLocation.location', {
+        url: '/:location',
+        component: 'personByLocationList',
+        resolve: {
+            list: ['pouchdb', '$stateParams', function (pouchdb, $stateParams) {
+                return pouchdb.query('person/byLocation', {
+                    key: $stateParams.location
+                }).then(_.property('rows')).then(_.partial(_.map, _, _.property('value')));
+            }],
+            location: ['pouchdb', '$stateParams', function (pouchdb, $stateParams) {
+                return pouchdb.get($stateParams.location).catch(() => {
+                    return {
+                        name: _.startCase(_.replace($stateParams.location, /.*:/, ''))
+                    }
+                });
+            }]
+        }
+
+
+    });
     pouchdbProvider.name = window.location.protocol + "//" + window.location.host + "/db/birthright"
+})
+
+.component('personByLocationList', {
+    bindings: {
+        list: '<',
+        location: '<'
+    },
+    templateUrl: "fragments/personByLocationList.html"
 })
 
 .component('refTree', {
@@ -106,7 +134,7 @@ angular.module('birthright', ['ui.router'])
 
 })
 
-.controller('RefCtrl', ['item', function(item) {
+.controller('RefCtrl', ['item', function (item) {
     this.item = item
 }])
 
@@ -128,7 +156,7 @@ angular.module('birthright', ['ui.router'])
                 controller: "RefCtrl"
             }
         },
-        god:{
+        god: {
             default: {
                 templateUrl: "fragments/god.html",
                 controller: "RefCtrl"
