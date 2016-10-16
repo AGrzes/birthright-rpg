@@ -116,22 +116,24 @@ angular.module('birthright', ['ui.router','ui.bootstrap'])
     bindings: {
         list: '<',
         children: '@',
-        level: '@',
         path: '@'
     },
     template: `
-        <ul class="nav nav-stacked" ng-if="$ctrl.show" >
-            <li role="presentation" ng-repeat="item in $ctrl.list"><a style="padding-left:{{$ctrl.indent}}px" href="{{$ctrl.path}}{{item.node}}">{{item.name}}</a>
-            <!--a><i class="glyphicon glyphicon-triangle-bottom" ng-click="$ctrl.colapse=!$ctrl.colapse"></i></a-->
-                <toc list="item[$ctrl.children]" children="{{$ctrl.children}}" level="{{$ctrl.nextLevel}}" path="{{$ctrl.path}}" uib-collapse="$ctrl."/>
+        <ul class="list" ng-if="$ctrl.show" >
+            <li ng-repeat="item in $ctrl.list"><a href="{{$ctrl.path}}{{item.node}}">{{item.name}}</a>
+            <span ng-if="$ctrl.hasChildren(item)">
+            <a  ng-show="!$ctrl.collapse[$index]"><i class="glyphicon glyphicon-triangle-top" ng-click="$ctrl.collapse[$index]=true"></i></a>
+            <a  ng-show="$ctrl.collapse[$index]"><i class="glyphicon glyphicon-triangle-bottom" ng-click="$ctrl.collapse[$index]=false"></i></a>
+            </span>
+                <toc list="item[$ctrl.children]" children="{{$ctrl.children}}" path="{{$ctrl.path}}" uib-collapse="$ctrl.collapse[$index]"/>
             </li>
         </ul>
     `,
     controller: function () {
         this.children = this.children || 'children';
-        this.nextLevel = 1 * (this.level || 0) + 1;
-        this.indent = 16 * (this.level || 0) + 15;
         this.show = !!this.list && !!this.list.length;
+        this.hasChildren = (item) => !!item[this.children] && !!item[this.children].length;
+        this.collapse = [];
     }
 
 })
