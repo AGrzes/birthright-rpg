@@ -16,14 +16,7 @@ angular.module('birthright', ['ui.router','ui.bootstrap'])
         component: 'refTree',
         resolve: {
             toc: ['pouchdb', function (pouchdb) {
-                return pouchdb.get("reference-toc").then((toc) => {
-                    var traverse = function (document) {
-                        return [pouchdb.get(document.node).then((d) => document.name = d.name).catch(() => document.name = document.node),
-                            _.map(document.children, traverse)
-                        ]
-                    }
-                    return Promise.all(_.flattenDeep(traverse(toc))).then(() => toc);
-                });
+                return pouchdb.get("reference-toc");
             }],
             path: [() => '#/setting/']
         }
@@ -54,14 +47,7 @@ angular.module('birthright', ['ui.router','ui.bootstrap'])
         component: 'refTree',
         resolve: {
             toc: ['pouchdb', function (pouchdb) {
-                return pouchdb.get("geo-toc").then((toc) => {
-                    var traverse = function (document) {
-                        return [pouchdb.get(document.node).then((d) => document.name = d.name).catch(() => document.name = document.node),
-                            _.map(document.children, traverse)
-                        ]
-                    }
-                    return Promise.all(_.flattenDeep(traverse(toc))).then(() => toc);
-                });
+                return pouchdb.get("geo-toc");
             }],
             path: [() => '#/personByLocation/']
         }
