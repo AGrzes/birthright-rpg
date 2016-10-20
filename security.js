@@ -1,73 +1,76 @@
 var passport = require('passport');
-var GoogleStrategy = require('passport-google-oauth20').Strategy;
 var BasicStrategy = require('passport-http').BasicStrategy;
-
-module.exports = function (app, clientID, clientSecret, callbackURL, lookup,serviceUser,servicePassword) {
-    passport.use(new GoogleStrategy({
-            clientID: clientID,
-            clientSecret: clientSecret,
-            callbackURL: callbackURL
+var ConnectRoles = require('connect-roles');
+var _ = require('lodash');
+var userRegistry = {
+    users: {
+        system: {
+            password: "dCNL3O9ysSvjdv7iT5tvFBkdtgqmrvI7K8RatMUG1qYZFFF5FKGWn4xU9znRtbUR",
+            data: {
+                name: 'system',
+                role: 'system'
+            }
         },
-        function (accessToken, refreshToken, profile, cb) {
-            cb(null, lookup(profile.emails[0].value));
+        player: {
+            password: "vYosZh4DS73hpNrYB6HY8cmQbF5CVbqecPTA4tRHkq8zuoMNqIlXFQNzLObMU8pp",
+            data: {
+                name: 'player',
+                role: 'player'
+            }
+        },
+        dm: {
+            password: "zl8Nw9AvQEy5DDCapMcEjnSUEVtjUbdXI7GE7o5jVF9xdRp4FFHsCoWXMwIOoKD6",
+            data: {
+                name: 'dm',
+                role: 'dm'
+            }
         }
-    ));
+    },
+
+    lookup: function (username, password) {
+        var user = userRegistry.users[username];
+        if (user && user.password === password) {
+            return user.data;
+        } else {
+            return null;
+        }
+    },
+    inRole: function(user,role){
+        switch (role){
+            case "user": return _.includes(['player','dm'], user.role);
+            case "system": return _.includes(['system'], user.role);
+            default: return false;
+        }
+    }
+}
+
+module.exports = function (app, clientID, clientSecret, callbackURL, lookup, serviceUser, servicePassword) {
 
     passport.use(new BasicStrategy(
         function (userid, password, done) {
-            if (userid==serviceUser&& password==servicePassword){
-                return done(null, {});
-            } else {
-                return done(null, false);
-            }
+            done(null, userRegistry.lookup(userid, password));
         }
     ));
 
-    passport.serializeUser(function (user, done) {
-        done(null, user.id);
-    });
-
-    passport.deserializeUser(function (id, done) {
-        done(null, lookup(id));
-    });
-
-    app.use(require('cookie-parser')());
-    app.use(require('body-parser').urlencoded({
-        extended: true
-    }));
-    app.use(require('express-session')({
-        secret: 'keyboard cat',
-        resave: true,
-        saveUninitialized: true
-    }));
-    app.use(passport.initialize());
-    app.use(passport.session());
-
-    app.get('/auth/google',
-        passport.authenticate('google', {
-            scope: ['email']
-        }));
-
-    app.get('/auth/google/callback',
-        passport.authenticate('google', {
-            failureRedirect: '/login'
-        }),
-        function (req, res) {
-            // Successful authentication, redirect home.
-            res.redirect('/');
-        });
-
-    function ensureAuthenticated(req, res, next) {
-        if (req.isAuthenticated()) {
-            // req.user is available for use here
-            return next();
+    var user = new ConnectRoles({
+        failureHandler: function (req, res, action) {
+            res.sendStatus(401);
         }
+    });
 
-        // denied. redirect to login
-        res.redirect('/auth/google')
-    }
+    user.use(function (req, role) {
+        if (!req.isAuthenticated()) {
+            return role === 'guest';
+        } else {
+            return userRegistry.inRole(req.user,role);
+        }
+    })
+
 
     return {
-        secure: ensureAuthenticated
+        protected: () => passport.authenticate('basic', {
+            session: false
+        }),
+        user: user
     }
 }

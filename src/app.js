@@ -72,7 +72,7 @@ angular.module('birthright', ['ui.router','ui.bootstrap'])
 
 
     });
-    pouchdbProvider.name = window.location.protocol + "//" + window.location.host + "/db/birthright"
+    pouchdbProvider.name = window.location.protocol + "//" + window.location.host + "/data/birthright"
 })
 
 .component('personByLocationList', {
