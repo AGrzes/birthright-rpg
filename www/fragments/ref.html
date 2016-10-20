@@ -1,9 +1,7 @@
-
 <div class="panel panel-primary">
     <div class="panel-heading">
         <h3 class="panel-title">{{$ctrl.item.name}}</h3>
     </div>
-    <div class="panel-body">
-        {{$ctrl.item.contnet}}
+    <div class="panel-body" ng-bind-html="$ctrl.item.content | markdown">
     </div>
 </div>
