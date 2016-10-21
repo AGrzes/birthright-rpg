@@ -10,7 +10,7 @@ var security = require('./security')(app, '655064932863-ipv5fbsc0hkua3sfqm22igim
 }, 'user', 'password')
 
 app.use(security.user.middleware());
-app.use('/',security.protected(), security.user.is('user'), express.static('www'));
+
 app.use('/angular', express.static(__dirname + '/node_modules/angular'));
 app.use('/angular-ui-router', express.static(__dirname + '/node_modules/angular-ui-router/release'));
 app.use('/bootstrap', express.static(__dirname + '/bootstrap'));
@@ -21,6 +21,7 @@ var pouchdb = require('./pouchdb');
 app.use('/db', security.protected(), security.user.is('system'), pouchdb);
 app.use('/data', security.protected(), security.user.is('user'), pouchdb);
 app.get('/js/app.js', browserify('src/app.js'));
+app.use('/',security.protected(), security.user.is('user'), express.static('www'));
 
 app.listen(process.env.OPENSHIFT_NODEJS_PORT || 8080, process.env.OPENSHIFT_NODEJS_IP, function () {
     console.log('Example app listening on port 8080!');
