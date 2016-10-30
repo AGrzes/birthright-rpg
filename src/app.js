@@ -1,10 +1,10 @@
 var _ = require('lodash');
 var marked = require('marked');
 require('angular-ui-bootstrap');
-angular.module('birthright', ['ui.router','ui.bootstrap'])
+angular.module('birthright', ['ui.router', 'ui.bootstrap'])
 
 .config(function ($stateProvider, $urlRouterProvider, pouchdbProvider) {
-    $urlRouterProvider.otherwise('/sample');
+    $urlRouterProvider.otherwise('/setting');
 
     $stateProvider.state('sample', {
         url: '/sample',
