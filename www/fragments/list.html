@@ -1,0 +1,10 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">{{$ctrl.item.name}}</h3>
+    </div>
+    <div ng-if="$ctrl.item.content" class="panel-body" ng-bind-html="$ctrl.item.content | markdown">
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item" ng-repeat="item in $ctrl.list"><a href="{{$ctrl.path}}{{item.id}}">{{item.name}}</a></li>
+    </ul>
+</div>

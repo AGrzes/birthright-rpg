@@ -128,6 +128,16 @@ angular.module('birthright', ['ui.router', 'ui.bootstrap'])
     this.item = item
 }])
 
+.controller('ListCtrl', ['item', 'pouchdb','$scope','path', function (item, pouchdb,$scope,path) {
+    this.item = item;
+    pouchdb.query('parent/parent', {
+        key: item._id
+    }).then(_.property('rows')).then(_.partial(_.map, _, _.property('value'))).then((list) => {
+        this.list = list;
+        $scope.$apply()
+    });
+    this.path=path;
+}])
 
 .provider('pouchdb', function () {
     var config = this;
@@ -150,6 +160,12 @@ angular.module('birthright', ['ui.router', 'ui.bootstrap'])
             default: {
                 templateUrl: "fragments/god.html",
                 controller: "RefCtrl"
+            }
+        },
+        list: {
+            default: {
+                templateUrl: "fragments/list.html",
+                controller: "ListCtrl"
             }
         }
 
