@@ -3,7 +3,7 @@ var marked = require('marked');
 require('angular-ui-bootstrap');
 angular.module('birthright', ['ui.router', 'ui.bootstrap'])
 
-.config(function ($stateProvider, $urlRouterProvider, pouchdbProvider) {
+.config(function ($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise('/setting');
 
     $stateProvider.state('sample', {
@@ -15,8 +15,8 @@ angular.module('birthright', ['ui.router', 'ui.bootstrap'])
         url: '/setting',
         component: 'refTree',
         resolve: {
-            toc: ['pouchdb', function (pouchdb) {
-                return pouchdb.get("reference-toc");
+            toc: ['$data', function ($data) {
+                return $data.entity("reference-toc");
             }],
             path: [() => '#/setting/']
         }
@@ -36,8 +36,8 @@ angular.module('birthright', ['ui.router', 'ui.bootstrap'])
         }],
         controllerAs: '$ctrl',
         resolve: {
-            item: ['pouchdb', '$stateParams', function (pouchdb, $stateParams) {
-                return pouchdb.get($stateParams.page);
+            item: ['$data', '$stateParams', function ($data, $stateParams) {
+                return $data.entity($stateParams.page);
             }]
         }
     });
@@ -46,8 +46,8 @@ angular.module('birthright', ['ui.router', 'ui.bootstrap'])
         url: '/personByLocation',
         component: 'refTree',
         resolve: {
-            toc: ['pouchdb', function (pouchdb) {
-                return pouchdb.get("geo-toc");
+            toc: ['$data', function ($data) {
+                return $data.entity("geo-toc");
             }],
             path: [() => '#/personByLocation/']
         }
@@ -56,23 +56,16 @@ angular.module('birthright', ['ui.router', 'ui.bootstrap'])
         url: '/:location',
         component: 'personByLocationList',
         resolve: {
-            list: ['pouchdb', '$stateParams', function (pouchdb, $stateParams) {
-                return pouchdb.query('person/byLocation', {
-                    key: $stateParams.location
-                }).then(_.property('rows')).then(_.partial(_.map, _, _.property('value')));
+            list: ['$data', '$stateParams', function ($data, $stateParams) {
+                return $data.byLocation($stateParams.location, 'person');
             }],
-            location: ['pouchdb', '$stateParams', function (pouchdb, $stateParams) {
-                return pouchdb.get($stateParams.location).catch(() => {
-                    return {
-                        name: _.startCase(_.replace($stateParams.location, /.*:/, ''))
-                    }
-                });
+            location: ['$stateParams', function ($stateParams) {
+                return _.startCase(_.replace($stateParams.location, /.*:/, ''))
             }]
         }
 
 
     });
-    pouchdbProvider.name = window.location.protocol + "//" + window.location.host + "/data/birthright"
 })
 
 .component('personByLocationList', {
@@ -128,25 +121,22 @@ angular.module('birthright', ['ui.router', 'ui.bootstrap'])
     this.item = item
 }])
 
-.controller('ListCtrl', ['item', 'pouchdb','$scope','path', function (item, pouchdb,$scope,path) {
+.controller('ListCtrl', ['item', '$data', '$scope', 'path', function (item, $data, $scope, path) {
     this.item = item;
-    pouchdb.query('parent/parent', {
-        key: item._id
-    }).then(_.property('rows')).then(_.partial(_.map, _, _.property('value'))).then((list) => {
+    $data.children(item._id).then((list) => {
         this.list = list;
-        $scope.$apply()
+        //$scope.$apply()
     });
-    this.path=path;
+    this.path = path;
 }])
 
-.provider('pouchdb', function () {
-    var config = this;
-    var pouchdb = require('pouchdb-browser');
-    this.$get = [function () {
-        return new pouchdb(config.name, config.options);
-    }]
-
-})
+.factory('$data', ['$http', function ($http) {
+    return {
+        children: (parentId) => $http.get('/data/children/' + parentId).then((res) => res.data),
+        entity: (id) => $http.get('/data/entity/' + id).then((res) => res.data),
+        byLocation: (location, type) => $http.get('/data/byLocation/' + location + '/' + type).then((res) => res.data)
+    }
+}])
 
 .factory('templateResolver', function () {
     var map = {

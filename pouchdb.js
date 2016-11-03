@@ -9,10 +9,11 @@ PouchDB.defaults({
 });
 
 var router = express.Router();
-router.use(require('pouchdb-express-router')(PouchDB.defaults({
+router.pouch = PouchDB.defaults({
     prefix: process.env.OPENSHIFT_DATA_DIR || 'data/',
     adapter: 'fs'
-})));
+})
+router.use(require('pouchdb-express-router')(router.pouch));
 
 
 module.exports = router;
