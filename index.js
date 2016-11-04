@@ -22,20 +22,44 @@ var pouchdb = require('./pouchdb');
 var db = new pouchdb.pouch('birthright')
 app.use('/db', security.protected(), security.user.is('system'), pouchdb);
 
-app.get('/data/entity/:id', function (req, res, next) {
-    db.get(req.params.id).then((doc) => res.send(doc)).catch((err) => res.status(500).send(err));
+var overlay = (role) => (object) => {
+    if (_.isArray(object)) {
+        return _(object).map(overlay(role)).filter(_.identity);
+    } else if (_.isObject(object)) {
+        object = _.mapValues(object, overlay(role));
+        var $overlay = _.get(object, '$overlay');
+        if ($overlay) {
+            if (_.has($overlay, role)) {
+                var role$overlay = _.get($overlay, role);
+                if (role$overlay) {
+                    return _.assign(object, role$overlay);
+                } else {
+                    return null;
+                }
+            }
+            _.unset(object, '$overlay');
+        }
+        return object;
+    } else {
+        return object;
+    }
+}
+
+app.get('/data/entity/:id', security.protected(), security.user.is('user'), function (req, res, next) {
+    db.get(req.params.id).then(overlay(req.user.role)).then((doc) => res.send(doc)).catch((err) => res.status(500).send(err));
 });
 
-app.get('/data/children/:parentId', function (req, res, next) {
+app.get('/data/children/:parentId', security.protected(), security.user.is('user'), function (req, res, next) {
     db.query('parent/parent', {
         key: req.params.parentId
-    }).then(_.property('rows')).then(_.partial(_.map, _, _.property('value'))).then((doc) => res.send(doc)).catch((err) => res.status(500).send(err));
+    }).then(_.property('rows')).then(_.partial(_.map, _, _.property('value'))).then(overlay(req.user.role)).then((doc) => res.send(doc)).catch((err) => res.status(500).send(err));
 });
 
-app.get('/data/byLocation/:location/:type', function (req, res, next) {
+app.get('/data/byLocation/:location/:type', security.protected(), security.user.is('user'), function (req, res, next) {
     db.query('person/byLocation', {
-        key: req.params.location
-    }).then(_.property('rows')).then(_.partial(_.map, _, _.property('value'))).then((doc) => res.send(doc)).catch((err) => res.status(500).send(err));
+        key: req.params.location,
+        include_docs: true
+    }).then(_.property('rows')).then(_.partial(_.map, _, _.property('doc'))).then(overlay(req.user.role)).then((doc) => res.send(doc)).catch((err) => res.status(500).send(err));
 });
 
 app.use('/data', security.protected(), security.user.is('user'), pouchdb);
