@@ -57,10 +57,7 @@ angular.module('birthright', ['ui.router', 'ui.bootstrap'])
         component: 'personByLocationList',
         resolve: {
             list: ['$data', '$stateParams', function ($data, $stateParams) {
-                return $data.byLocation($stateParams.location, 'person').then((list) => {
-                    console.log(list)
-                    return _.map(list, require('../person').listItem)
-                });
+                return $data.byLocation($stateParams.location, 'person').then((list) => _.map(list, require('../person').listItem));
             }],
             location: ['$stateParams', function ($stateParams) {
                 return _.startCase(_.replace($stateParams.location, /.*:/, ''))
