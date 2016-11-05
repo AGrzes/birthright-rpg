@@ -3,6 +3,10 @@
         <h3 class="panel-title">People of {{$ctrl.location}}</h3>
     </div>
     <ul class="list-group">
-        <li class="list-group-item" ng-repeat="item in $ctrl.list">{{item.name}}</li>
+        <li class="list-group-item" ng-repeat="item in $ctrl.list">
+            <h4>{{ item.label}} <small>{{item.subLabel }}</h4></small>
+            <div ng-bind-html="item.description | markdown">
+            </div>
+        </li>
     </ul>
 </div>
