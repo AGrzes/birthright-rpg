@@ -29,6 +29,7 @@ var overlay = (role) => (object) => {
         object = _.mapValues(object, overlay(role));
         var $overlay = _.get(object, '$overlay');
         if ($overlay) {
+            _.unset(object, '$overlay');
             if (_.has($overlay, role)) {
                 var role$overlay = _.get($overlay, role);
                 if (role$overlay) {
@@ -37,7 +38,6 @@ var overlay = (role) => (object) => {
                     return null;
                 }
             }
-            _.unset(object, '$overlay');
         }
         return object;
     } else {
