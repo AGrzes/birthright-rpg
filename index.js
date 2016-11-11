@@ -62,6 +62,13 @@ app.get('/data/byLocation/:location/:type', security.protected(), security.user.
     }).then(_.property('rows')).then(_.partial(_.map, _, _.property('doc'))).then(overlay(req.user.role)).then((doc) => res.send(doc)).catch((err) => res.status(500).send(err));
 });
 
+app.get('/data/byType/:type', security.protected(), security.user.is('user'), function (req, res, next) {
+    db.query('type', {
+        key: req.params.type,
+        include_docs: true
+    }).then(_.property('rows')).then(_.partial(_.map, _, _.property('doc'))).then(overlay(req.user.role)).then((doc) => res.send(doc)).catch((err) => res.status(500).send(err));
+});
+
 app.use('/data', security.protected(), security.user.is('user'), pouchdb);
 
 

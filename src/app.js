@@ -63,17 +63,24 @@ angular.module('birthright', ['ui.router', 'ui.bootstrap'])
                 return _.startCase(_.replace($stateParams.location, /.*:/, ''))
             }]
         }
+    });
 
-
+    $stateProvider.state('sessionLog', {
+        url: '/sessionLog',
+        component: 'sessionLog',
+        resolve: {
+            sessions: ['$data', function ($data) {
+                return $data.byType("session").then((l) => _.orderBy(l, "lp"));
+            }]
+        }
     });
 })
 
-.component('personByLocationList', {
+.component('sessionLog', {
     bindings: {
-        list: '<',
-        location: '<'
+        sessions: '<'
     },
-    templateUrl: "fragments/personByLocationList.html"
+    templateUrl: "fragments/sessionLog.html"
 })
 
 .component('refTree', {
@@ -134,7 +141,8 @@ angular.module('birthright', ['ui.router', 'ui.bootstrap'])
     return {
         children: (parentId) => $http.get('/data/children/' + parentId).then((res) => res.data),
         entity: (id) => $http.get('/data/entity/' + id).then((res) => res.data),
-        byLocation: (location, type) => $http.get('/data/byLocation/' + location + '/' + type).then((res) => res.data)
+        byLocation: (location, type) => $http.get('/data/byLocation/' + location + '/' + type).then((res) => res.data),
+        byType: (type) => $http.get('/data/byType/' + type).then((res) => res.data),
     }
 }])
 
