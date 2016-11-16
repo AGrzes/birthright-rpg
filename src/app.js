@@ -1,7 +1,7 @@
 var _ = require('lodash');
 var marked = require('marked');
 require('angular-ui-bootstrap');
-angular.module('birthright', ['ui.router', 'ui.bootstrap'])
+angular.module('birthright', ['ui.router', 'ui.bootstrap',require('angular-animate')])
 
 .config(function ($stateProvider, $urlRouterProvider) {
     $urlRouterProvider.otherwise('/setting');

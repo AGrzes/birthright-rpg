@@ -1,9 +1,11 @@
 <div class="col-xs-12">
-    <div class="panel panel-primary" ng-repeat="session in $ctrl.sessions">
-        <div class="panel-heading">
-            <h3 class="panel-title">{{session.date}} - {{session.name}} <span class="label label-danger pull-right" ng-if="session.awards.xp">{{session.awards.xp}} XP</span></h3>
+    <uib-accordion>
+        <div uib-accordion-group="" class="panel panel-primary" ng-repeat="session in $ctrl.sessions">
+            <uib-accordion-heading>
+                <h3 class="panel-title">{{session.date}} - {{session.name}} <span class="label label-danger pull-right" ng-if="session.awards.xp">{{session.awards.xp}} XP</span></h3>
+            </uib-accordion-heading>
+            <div class="panel-body" ng-if="session.events" ng-bind-html="session.events | markdown">
+            </div>
         </div>
-        <div class="panel-body" ng-if="session.events" ng-bind-html="session.events | markdown">
-        </div>
-    </div>
+    </uib-accordion>
 </div>
