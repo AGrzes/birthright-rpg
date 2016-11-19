@@ -74,6 +74,22 @@ angular.module('birthright', ['ui.router', 'ui.bootstrap',require('angular-anima
             }]
         }
     });
+    $stateProvider.state('changelog', {
+        url: '/changelog',
+        component: 'changelog',
+        resolve: {
+            changelog: ['$data', function ($data) {
+                return $data.byType("changelog").then((l) => _.orderBy(l, "lp","desc"));
+            }]
+        }
+    });
+})
+
+.component('changelog', {
+    bindings: {
+        changelog: '<'
+    },
+    templateUrl: "fragments/changelog.html"
 })
 
 .component('sessionLog', {
