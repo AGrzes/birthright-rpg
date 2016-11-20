@@ -85,6 +85,15 @@ angular.module('birthright', ['ui.router', 'ui.bootstrap',require('angular-anima
     });
 })
 
+.component('personByLocationList', {
+    bindings: {
+        list: '<',
+        location: '<'
+    },
+    templateUrl: "fragments/personByLocationList.html"
+})
+
+
 .component('changelog', {
     bindings: {
         changelog: '<'
