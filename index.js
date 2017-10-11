@@ -10,8 +10,7 @@ app.get('/health', function (req, res) {
   res.sendStatus(200);
 });
 var pouchdb = require('./pouchdb');
-var db = new pouchdb.pouch('birthright')
-app.use('/db', pouchdb);
+var db = new pouchdb('birthright')
 
 var overlay = (role) => (object) => {
   if (_.isArray(object)) {
@@ -59,9 +58,6 @@ app.get('/data/byType/:type', function (req, res, next) {
     include_docs: true
   }).then(_.property('rows')).then(_.partial(_.map, _, _.property('doc'))).then(overlay('player')).then((doc) => res.send(doc)).catch((err) => res.status(500).send(err));
 });
-
-app.use('/data', pouchdb);
-
 
 
 app.get('/js/app.js', browserify('src/app.js'));

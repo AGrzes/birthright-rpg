@@ -30,11 +30,8 @@
     "passport": "^0.3.2",
     "passport-google-oauth20": "^1.0.0",
     "passport-http": "^0.3.0",
-    "pouchdb-adapter-fs": "^2.0.3",
     "pouchdb-adapter-memory": "^6.3.4",
-    "pouchdb-browser": "^6.0.6",
     "pouchdb-core": "^6.0.6",
-    "pouchdb-express-router": "0.0.9",
     "pouchdb-mapreduce": "^6.0.6"
   }
 }
