@@ -9,6 +9,6 @@ var pouch = PouchDB.defaults({
     adapter: 'memory'
 })
 
-new pouch('birthright').bulkDocs(JSON.parse(fs.readFileSync('data.json'))).then(console.log).catch(console.error)
+new pouch('birthright').bulkDocs(JSON.parse(fs.readFileSync('data.json'))).catch(console.error)
 
 module.exports = pouch;
