@@ -142,10 +142,12 @@ angular.module('birthright', ['ui.router', 'ui.bootstrap',require('angular-anima
         </ul>
     `,
     controller: function () {
-        this.children = this.children || 'children';
-        this.show = !!this.list && !!this.list.length;
-        this.hasChildren = (item) => !!item[this.children] && !!item[this.children].length;
-        this.collapse = [];
+        this.$onInit= function() {
+          this.children = this.children || 'children';
+          this.show = !!this.list && !!this.list.length;
+          this.hasChildren = (item) => !!item[this.children] && !!item[this.children].length;
+          this.collapse = [];
+        }
     }
 
 })
