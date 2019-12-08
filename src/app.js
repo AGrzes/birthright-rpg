@@ -3,7 +3,8 @@ var marked = require('marked');
 require('angular-ui-bootstrap');
 angular.module('birthright', ['ui.router', 'ui.bootstrap',require('angular-animate')])
 
-.config(function ($stateProvider, $urlRouterProvider) {
+.config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
+    $locationProvider.hashPrefix('');
     $urlRouterProvider.otherwise('/setting');
 
     $stateProvider.state('sample', {
@@ -24,10 +25,10 @@ angular.module('birthright', ['ui.router', 'ui.bootstrap',require('angular-anima
 
     $stateProvider.state('setting.page', {
         url: '/:page',
-        componentProvider: function () {
+        /*componentProvider: function () {
             console.log(arguments);
             return 'ref';
-        },
+        },*/
         templateProvider: ['templateResolver', 'item', '$templateFactory', function (templateResolver, item, $templateFactory) {
             return $templateFactory.fromUrl(templateResolver(item).templateUrl);
         }],
@@ -221,4 +222,4 @@ angular.module('birthright', ['ui.router', 'ui.bootstrap',require('angular-anima
     return function (input) {
         return $sce.trustAsHtml(marked(input));
     };
-}]);;
+}]);
